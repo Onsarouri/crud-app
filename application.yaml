@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata: 
+  name: myapp-argo-Application
+  namespace: argocd 
+spec: 
+  project: default
+
+  source: # the repo that hosts the app and the changes that might occure
+    repoURL: https://github.com/Onsarouri/myapplication.git
+    targetRevision: HEAD #last commits in my repo
+    path: crudapp
+
+  destination: #kube cluster
+    server: https://kubernetes.default.svc #the ArgoCD is deployed on the same cluster
+    namespace: myapps 
+
+  syncPolicy: 
+    syncOptions:
+    - CreateNamespace=ture 
+
+  # Enabling atuomatic sync,
+    automated: 
+      selfHeal: true #Enabling automatic self-healing, by default chnages made to the live cluster will not trigger automated sync
+      prune: true # Enabling automatic pruning (by default automatic sync will not delete resources)
+
+  #ArgoCD polls Git repo every 3 mints, we can configure a Git webhook
+
+
+
