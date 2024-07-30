@@ -6,25 +6,25 @@ metadata:
 spec: 
   project: default
 
-  source: # the repo that hosts the app and the changes that might occure
+  source: # the repo that hosts the app and the changes that might occur
     repoURL: https://github.com/Onsarouri/crud-app.git
     targetRevision: HEAD #last commits in my repo
     path: helm/myapp-docker
 
-  destination: #kube cluster
-    server: https://kubernetes.default.svc #the ArgoCD is deployed on the same cluster
+  destination: # kube cluster
+    server: https://kubernetes.default.svc # the ArgoCD is deployed on the same cluster
     namespace: myapps 
 
   syncPolicy: 
     syncOptions:
-    - CreateNamespace=ture 
+    - CreateNamespace=true 
 
-  # Enabling atuomatic sync,
-    automated: 
-      selfHeal: true #Enabling automatic self-healing, by default chnages made to the live cluster will not trigger automated sync
-      prune: true # Enabling automatic pruning (by default automatic sync will not delete resources)
+  # Enabling automatic sync,
+  automated: 
+    selfHeal: true # Enabling automatic self-healing, by default changes made to the live cluster will not trigger automated sync
+    prune: true # Enabling automatic pruning (by default automatic sync will not delete resources)
 
-  #ArgoCD polls Git repo every 3 mints, we can configure a Git webhook
+  # ArgoCD polls Git repo every 3 minutes, we can configure a Git webhook
 
 ---
 
@@ -35,5 +35,21 @@ metadata:
   namespace: argocd
 stringData:
   username: Onsarouri
-  password: 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
+  password: <your-personal-access-token>
 
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Repository
+metadata:
+  name: Onsarouri-crud-app-repo
+  namespace: argocd
+spec:
+  type: git
+  url: https://github.com/Onsarouri/crud-app.git
+  usernameSecret:
+    name: my-git-secret
+    key: username
+  passwordSecret:
+    name: my-git-secret
+    key: password
