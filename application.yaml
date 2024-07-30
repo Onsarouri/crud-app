@@ -9,7 +9,7 @@ spec:
   source: # the repo that hosts the app and the changes that might occure
     repoURL: https://github.com/Onsarouri/crud-app.git
     targetRevision: HEAD #last commits in my repo
-    path: helm
+    path: helm/myapp-docker
 
   destination: #kube cluster
     server: https://kubernetes.default.svc #the ArgoCD is deployed on the same cluster
