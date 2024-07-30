@@ -26,5 +26,14 @@ spec:
 
   #ArgoCD polls Git repo every 3 mints, we can configure a Git webhook
 
+---
 
+apiVersion: v1 
+kind: Secret
+metadata:
+  name: my-git-secret
+  namespace: argocd
+stringData:
+  username: Onsarouri
+  password: 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
 
