@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+data:
+  triggers: |
+    - name: on-sync-status-unknown
+      condition: app.status.operationState.phase == 'Unknown'
+      template: sync-status-unknown
+  templates: |
+    - name: sync-status-unknown
+      title: Application {{.app.metadata.name}} has unknown sync status
+      body: |
+        Application {{.app.metadata.name}} sync status is unknown.
+
+  service.slack: |
+    token: <your-slack-token>
+    default: <your-default-slack-channel>

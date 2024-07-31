@@ -6,50 +6,39 @@ metadata:
 spec: 
   project: default
 
-  source: # the repo that hosts the app and the changes that might occur
+  source: # the repo that hosts the app and the changes that might occure
     repoURL: https://github.com/Onsarouri/crud-app.git
     targetRevision: HEAD #last commits in my repo
-    path: helm/myapp-docker
+    path: crudapp
 
-  destination: # kube cluster
-    server: https://kubernetes.default.svc # the ArgoCD is deployed on the same cluster
+  destination: #kube cluster
+    server: https://kubernetes.default.svc #the ArgoCD is deployed on the same cluster
     namespace: myapps 
 
   syncPolicy: 
     syncOptions:
     - CreateNamespace=true 
 
-  # Enabling automatic sync,
-  automated: 
-    selfHeal: true # Enabling automatic self-healing, by default changes made to the live cluster will not trigger automated sync
-    prune: true # Enabling automatic pruning (by default automatic sync will not delete resources)
+  # Enabling atuomatic sync,
+    automated: 
+      selfHeal: true #automatically revert changes made to the cluster that do not match the Git repository
+      prune: true # delete resources that are no longer defined in the Git repository
 
-  # ArgoCD polls Git repo every 3 minutes, we can configure a Git webhook
-
----
-
-apiVersion: v1 
-kind: Secret
-metadata:
-  name: my-git-secret
-  namespace: argocd
-stringData:
-  username: Onsarouri
-  password: <your-personal-access-token>
+  #ArgoCD polls Git repo every 3 mints, we can configure a Git webhook
 
 ---
-
-apiVersion: argoproj.io/v1alpha1
-kind: Repository
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: Onsarouri-crud-app-repo
+  name: argocd-cm
   namespace: argocd
-spec:
-  type: git
-  url: https://github.com/Onsarouri/crud-app.git
-  usernameSecret:
-    name: my-git-secret
-    key: username
-  passwordSecret:
-    name: my-git-secret
-    key: password
+data:
+  repositories: |
+    - url: https://github.com/Onsarouri/crud-app.git
+      type: git
+      usernameSecret:
+        name: private-repo
+        key: username
+      passwordSecret:
+        name: private-repo
+        key: password
