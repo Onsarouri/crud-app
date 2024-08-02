@@ -1,19 +1,18 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: argocd-notifications-cm
+  name: argocd-cm
   namespace: argocd
 data:
-  triggers: |
-    - name: on-sync-status-unknown
-      condition: app.status.operationState.phase == 'Unknown'
-      template: sync-status-unknown
-  templates: |
-    - name: sync-status-unknown
-      title: Application {{.app.metadata.name}} has unknown sync status
-      body: |
-        Application {{.app.metadata.name}} sync status is unknown.
+  repositories: |
+    - url: https://github.com/Onsarouri/crud-app.git
+      type: git
+      usernameSecret:
+        name: email-credentials
+        key: username
+      passwordSecret:
+        name: email-credentials
+        key: password
 
-  service.slack: |
-    token: <your-slack-token>
-    default: <your-default-slack-channel>
+  notifications: |
+    configMap: argocd-notifications-cm

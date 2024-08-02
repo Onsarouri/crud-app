@@ -9,7 +9,7 @@ spec:
   source: # the repo that hosts the app and the changes that might occure
     repoURL: https://github.com/Onsarouri/crud-app.git
     targetRevision: HEAD #last commits in my repo
-    path: crudapp
+    path: helm
 
   destination: #kube cluster
     server: https://kubernetes.default.svc #the ArgoCD is deployed on the same cluster
@@ -25,20 +25,3 @@ spec:
       prune: true # delete resources that are no longer defined in the Git repository
 
   #ArgoCD polls Git repo every 3 mints, we can configure a Git webhook
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: argocd-cm
-  namespace: argocd
-data:
-  repositories: |
-    - url: https://github.com/Onsarouri/crud-app.git
-      type: git
-      usernameSecret:
-        name: private-repo
-        key: username
-      passwordSecret:
-        name: private-repo
-        key: password
