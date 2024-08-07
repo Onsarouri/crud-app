@@ -13,7 +13,7 @@ postgres:
   image: postgres:latest
   username: postgres
   password: admin
-  database: once-again
+  database: after-setting-notif
   port: 5432
 
 ingress:
