@@ -13,7 +13,7 @@ postgres:
   image: postgres:latest
   username: postgres
   password: admin
-  database: NIDHAL
+  database: another
   port: 5432
 
 ingress:
