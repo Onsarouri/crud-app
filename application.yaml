@@ -1,27 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
-metadata: 
-  name: myapp-argo-application
-  namespace: argocd 
-spec: 
+metadata:
+  name: myapp-argocd
+  namespace: argocd
+spec:
   project: default
-
-  source: # the repo that hosts the app and the changes that might occure
+  source:
     repoURL: https://github.com/Onsarouri/crud-app.git
-    targetRevision: HEAD #last commits in my repo
-    path: helm
-
-  destination: #kube cluster
-    server: https://kubernetes.default.svc #the ArgoCD is deployed on the same cluster
-    namespace: myapps 
-
-  syncPolicy: 
+    path: helm/myapp-docker
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
-    - CreateNamespace=true 
-
-  # Enabling atuomatic sync,
-    automated: 
-      selfHeal: true #automatically revert changes made to the cluster that do not match the Git repository
-      prune: true # delete resources that are no longer defined in the Git repository
-
-  #ArgoCD polls Git repo every 3 mints, we can configure a Git webhook
+      - CreateNamespace=true

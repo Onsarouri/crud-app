@@ -1,36 +1,43 @@
-image:
-  repository: onsarouri/myapp-docker
-  tag: latest
-  pullPolicy: IfNotPresent
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myapp-helm-values
+  namespace: myapps
+data:
+  values.yaml: |
+    image:
+      repository: onsarouri/myapp-docker
+      tag: latest
+      pullPolicy: IfNotPresent
 
-namespace: myapps
+    namespace: myapps
 
-service:
-  type: ClusterIP
-  port: 8000
+    service:
+      type: ClusterIP
+      port: 8000
 
-postgres:
-  image: postgres:latest
-  username: postgres
-  password: admin
-  database: noted_db
-  port: 5432
+    postgres:
+      image: postgres:latest
+      username: postgres
+      password: admin
+      database: noted_db
+      port: 5432
 
-ingress:
-  enabled: false
-  name: ""
-  className: ""
-  annotations: {}
-  host: ""
-  path: /
-  tls: []
-  extraHosts: []
-  extraPaths: []
+    ingress:
+      enabled: false
+      name: ""
+      className: ""
+      annotations: {}
+      host: ""
+      path: /
+      tls: []
+      extraHosts: []
+      extraPaths: []
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 3
-  targetCPUUtilizationPercentage: 80
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 80
 
-resources: {}
+    resources: {}
