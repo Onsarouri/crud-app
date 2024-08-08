@@ -13,7 +13,7 @@ postgres:
   image: postgres:latest
   username: postgres
   password: admin
-  database: noted_db 
+  database: HOPE 
   port: 5432
 
 ingress:
