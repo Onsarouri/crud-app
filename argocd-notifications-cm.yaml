@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+data:
+  trigger.on-sync-succeeded: |
+    - when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+      oncePer: app.status.sync.revision
+      send: [app-sync-succeeded]
+
+  trigger.on-out-of-sync: |
+    - when: app.status.sync.status == 'OutOfSync'
+      send: [app-out-of-sync]
+
+  trigger.on-degraded: |
+    - when: app.status.health.status == 'Degraded'
+      send: [app-degraded]
+
+  trigger.on-sync-failed: |
+    - when: app.status.operationState.phase == 'Failed' and app.status.operationState.operation == 'Sync'
+      send: [app-sync-failed]
+
+  trigger.on-health-status-change: |
+    - when: app.status.health.status in ['Healthy', 'Degraded', 'Progressing', 'Failed']
+      send: [app-health-status-change]
+
+  trigger.on-sync-status-change: |
+    - when: app.status.sync.status in ['Synced', 'OutOfSync', 'Unknown']
+      send: [app-sync-status-change]
+
+  trigger.on-sync-operation-started: |
+    - when: app.status.operationState.phase == 'Running' and app.status.operationState.operation == 'Sync'
+      send: [app-sync-operation-started]
+
+  trigger.on-sync-operation-completed: |
+    - when: app.status.operationState.phase in ['Succeeded', 'Failed'] and app.status.operationState.operation == 'Sync'
+      send: [app-sync-operation-completed]
+
+  template.app-sync-succeeded: |
+    email:
+      subject: Application {{.app.metadata.name}} deployed successfully
+      body: |
+        Application {{.app.metadata.name}} in namespace {{.app.metadata.namespace}} has been successfully deployed and is healthy.
+
+  template.app-out-of-sync: |
+    email:
+      subject: Application {{.app.metadata.name}} is out of sync
+      body: |
+        Application {{.app.metadata.name}} in namespace {{.app.metadata.namespace}} is out of sync. Please check the Argo CD dashboard for details.
+
+  template.app-degraded: |
+    email:
+      subject: Application {{.app.metadata.name}} is degraded
+      body: |
+        Application {{.app.metadata.name}} in namespace {{.app.metadata.namespace}} is in a degraded state. Please check the Argo CD dashboard for more information.
+
+  template.app-sync-failed: |
+    email:
+      subject: Sync failed for application {{.app.metadata.name}}
+      body: |
+        The sync operation for application {{.app.metadata.name}} in namespace {{.app.metadata.namespace}} has failed. Please check the Argo CD dashboard for details.
+
+  template.app-health-status-change: |
+    email:
+      subject: Health status changed for application {{.app.metadata.name}}
+      body: |
+        The health status of application {{.app.metadata.name}} in namespace {{.app.metadata.namespace}} has changed to {{.app.status.health.status}}. Please check the Argo CD dashboard for details.
+
+  template.app-sync-status-change: |
+    email:
+      subject: Sync status changed for application {{.app.metadata.name}}
+      body: |
+        The sync status of application {{.app.metadata.name}} in namespace {{.app.metadata.namespace}} has changed to {{.app.status.sync.status}}. Please check the Argo CD dashboard for details.
+
+  template.app-sync-operation-started: |
+    email:
+      subject: Sync operation started for application {{.app.metadata.name}}
+      body: |
+        A sync operation for application {{.app.metadata.name}} in namespace {{.app.metadata.namespace}} has started. Please monitor the progress on the Argo CD dashboard.
+
+  template.app-sync-operation-completed: |
+    email:
+      subject: Sync operation completed for application {{.app.metadata.name}}
+      body: |
+        The sync operation for application {{.app.metadata.name}} in namespace {{.app.metadata.namespace}} has completed with status {{.app.status.operationState.phase}}. Please check the Argo CD dashboard for details.
+
+  service.email.gmail: |
+    host: smtp.gmail.com
+    port: 587
+    from: $email-username
+    username: $email-username
+    password: $email-password
+
+  subscriptions: |
+    - recipients:
+        - ons.arouriii@gmail.com
+      triggers:
+        - on-sync-succeeded
+        - on-out-of-sync
+        - on-degraded
+        - on-sync-failed
+        - on-health-status-change
+        - on-sync-status-change
+        - on-sync-operation-started
+        - on-sync-operation-completed
