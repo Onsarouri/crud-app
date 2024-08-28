@@ -1,3 +1,5 @@
 email-credentials.yaml
 PASSargocd 
 secrets.yaml
+argocd-notif-secrets.yaml
+argocd-notifications-secret.yaml
