@@ -1,2 +1,2 @@
-# ArgoCD-Internship-2024
+# ArgoCD
 [Documentation](./ArgoCDProjectDocumentation.pdf)
