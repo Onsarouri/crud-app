@@ -1,2 +1,2 @@
-# argocd-internship-2024
-repo for argocd internship summer 2024
+# ArgoCD-Internship-2024
+[Documentation](./ArgoCDProjectDocumentation.pdf)
